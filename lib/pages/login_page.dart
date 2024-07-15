@@ -1,6 +1,8 @@
 import 'package:chat_app/components/my_button.dart';
 import 'package:chat_app/components/my_text_field.dart';
+import 'package:chat_app/pages/home_page.dart';
 import 'package:chat_app/pages/register_page.dart';
+import 'package:chat_app/services/auth/auth_service.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -13,6 +15,27 @@ class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
+void login() async{
+  final authService = AuthService();
+  try{
+    await authService.signInWithEmailAndPassword(
+      emailController.text,
+      passwordController.text,
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage())
+        );
+  }catch (e) {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          title: Text(e.toString()),
+        ),   
+      );
+  }
+}
 void navigatorToRegister() {
     Navigator.push(
       context,
@@ -54,7 +77,7 @@ void navigatorToRegister() {
                   height: 10,
                 ),
                 MyTextField(
-                  controller: emailController,
+                  controller: passwordController,
                   hintText: 'Password',
                   obscureText: true,
                 ),
@@ -81,7 +104,7 @@ void navigatorToRegister() {
                 ),
                 SizedBox(height: 25,),
                 MyButton(
-                  onTap: (){},
+                  onTap: login,
                   text: 'Login',
                 ),
                SizedBox(height: 50,),

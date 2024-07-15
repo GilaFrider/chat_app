@@ -1,4 +1,5 @@
 
+import 'package:chat_app/pages/home_page.dart';
 import 'package:chat_app/pages/login_page.dart';
 import 'package:chat_app/services/auth/auth_service.dart';
 import 'package:flutter/material.dart';
@@ -34,10 +35,10 @@ class _RegisterPageState extends State<RegisterPage> {
         emailController.text,
         passwordController.text,
       );
-      // Navigator.pushReplacement(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => HomePage()),
-      // );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
     }
     }catch(e){
       showDialog(
