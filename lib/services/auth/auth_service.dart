@@ -1,80 +1,74 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class AuthService{
-  final FirebaseAuth _auth = FirebaseAuth.instance;//auth users
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;//database(chat)
+class AuthService {
 
-  User? getCurrentUser(){
-    return _auth.currentUser;
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;// אימות משתמש
+
+  final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;// מסד נתונים(צאט)
+
+  User? getCurrentUser() {
+    return _firebaseAuth.currentUser;
   }
 
-  Future<UserCredential> signInWithEmailAndPassword(String email, String password) async {
-    try{
-      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-        email: email, password: password
+  Future<UserCredential> signInWithEmailPassword(String email, String password) async {
+    try {
+      UserCredential userCredential = await _firebaseAuth.signInWithEmailAndPassword(
+        email: email,
+        password: password
       );
-      _firestore.collection('Users').doc(userCredential.user!.uid).set(
+
+      _firebaseFirestore.collection('Users').doc(userCredential.user!.uid).set(
         {
-          'uid': userCredential.user!.uid,
-          'email': email,
+        'uid': userCredential.user!.uid,
+        email: email,
         },
         SetOptions(merge: true),
       );
+
       return userCredential;
-    }on FirebaseException catch(e){
+    } on FirebaseException catch (e) {
       throw Exception(e.code);
     }
-
-
   }
-  Future<UserCredential> signUpWithEmailAndPassword(String email, String password) async {
-    try{
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-        email: email, password: password
+
+  Future <UserCredential> signUpWithEmailPassword(String email, String password) async {
+    try {
+
+      UserCredential userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
       );
-      _firestore.collection('Users').doc(userCredential.user!.uid).set(
+
+      _firebaseFirestore.collection('Users').doc(userCredential.user!.uid).set(
         {
           'uid': userCredential.user!.uid,
           'email': email,
-        },
-        SetOptions(merge: true),
+        }
       );
+
       return userCredential;
-    }on FirebaseException catch(e){
+    } on FirebaseAuthException catch (e) {
       throw Exception(e.code);
     }
   }
+
   Future<void> signOut() async {
-    return await _auth.signOut();
+    return await _firebaseAuth.signOut();
   }
 
-  String getErrorMessage(String errorCode){
-    switch(errorCode){
-      case 'ERROR_INVALID_EMAIL':
-        return 'Email is invalid';
-      case 'ERROR_WRONG_PASSWORD':
-        return 'Password is invalid';
-      case 'ERROR_USER_NOT_FOUND':
-        return 'User not found';
-      case 'ERROR_OPERATION_NOT_ALLOWED':
-        return 'Operation not allowed';
-      case 'ERROR_TOO_MANY_REQUESTS':
-        return 'Too many requests';
-      case 'ERROR_WEAK_PASSWORD':
-        return 'Password is too weak';
-      case 'ERROR_INVALID_PASSWORD':
-        return 'Password is invalid';
-      case 'ERROR_WEAK_PASSWORD':
-        return 'Password is too weak';
-      case 'ERROR_INVALID_EMAIL':
-        return 'Email is invalid';
-      case 'ERROR_INVALID_USER':
-        return 'User is invalid';
-      case 'ERROR_USER_DISABLED':
-        return 'User is disabled';
-      default:
-        return errorCode;
+  String getErrorMessage(String errocode) {
+    switch (errocode) {
+      case 'Exception: wrong-password':
+        return 'סיסמא שגויה. אנא נסה שוב';
+      case 'Exception: user-not-found':
+        return 'לא נמצא משתמש עם הדוא״ל הזה. אנא הירשם';
+      case 'Exception: invalid-email':
+        return 'הדוא״ל אינו קיים';
+
+        default: 
+          return 'הייתה שגיאה';
     }
   }
+
 }

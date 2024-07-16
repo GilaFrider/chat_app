@@ -31,7 +31,7 @@ class _RegisterPageState extends State<RegisterPage> {
         )
       );
     }else{
-      await authService.signUpWithEmailAndPassword(
+      await authService.signUpWithEmailPassword(
         emailController.text,
         passwordController.text,
       );

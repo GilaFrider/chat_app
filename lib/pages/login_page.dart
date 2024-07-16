@@ -18,7 +18,7 @@ class _LoginPageState extends State<LoginPage> {
 void login() async{
   final authService = AuthService();
   try{
-    await authService.signInWithEmailAndPassword(
+    await authService.signInWithEmailPassword(
       emailController.text,
       passwordController.text,
       );
